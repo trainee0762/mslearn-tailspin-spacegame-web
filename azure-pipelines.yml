@@ -36,22 +36,27 @@ steps:
   displayName: 'Write build info'
   workingDirectory: $(wwwrootDir)
 
+- task: NuGetCommand@2
+  displayName: 'Restore project dependencies'
+  inputs:
+   command: 'restore'
+   restoreSolution: '**/*.sln'
+   feedsToUse: 'select'
+   vstsFeed: '$(System.TeamProject)/Tailspin.SpaceGame.Web.Models'
+
+
 - task: DotNetCoreCLI@2
   displayName: 'Build the project - $(buildConfiguration)'
   inputs:
-    command: 'build'
-    arguments: '--no-restore --configuration $(buildConfiguration)'
-    projects: '**/*.csproj'
+   command: 'build'
+   arguments: '--no-restore --configuration $(buildConfiguration)'
+   projects: '**/*.csproj'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish the project - $(buildConfiguration)'
   inputs:
-    command: 'publish'
-    projects: '**/*.csproj'
-    publishWebProjects: false
-    arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
-    zipAfterPublish: true
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-  condition: succeeded()
+   command: 'publish'
+   projects: '**/*.csproj'
+   publishWebProjects: false
+   arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+   zipAfterPublish: true
